@@ -7,12 +7,13 @@ import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+
 /**
  * @Author Marshall
  * @Date 2025/7/13 17:05
  * @Description: Spring AI 框架调用 AI 大模型（Ollama）
  */
-@Component
 public class OllamaAiInvoke implements CommandLineRunner {
     @Resource
     private ChatModel ollamaChatModel;

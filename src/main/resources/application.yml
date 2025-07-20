@@ -3,12 +3,18 @@ spring:
     name: octopus-ai-agent
   profiles:
     active: local
+  data:
+    redis:
+      database: 2
+      port: 6379
+      host: localhost
 
-  ai:
-    ollama:
-      base-url: http://localhost:11434
-      chat:
-        model: gemma3:1b
+
+#  ai:
+#    ollama:
+#      base-url: http://localhost:11434
+#      chat:
+#        model: gemma3:1b
 
 logging:
   level:
