@@ -16,8 +16,8 @@ public class PDFGenerationToolTest {
     @Test
     public void testGeneratePDF() {
         PDFGenerationTool tool = new PDFGenerationTool();
-        String fileName = "编程导航原创项目.pdf";
-        String content = "编程导航原创项目 https://www.codefather.cn";
+        String fileName = "恋爱.pdf";
+        String content = "恋爱就找章鱼智能体恋爱master";
         String result = tool.generatePDF(fileName, content);
         assertNotNull(result);
     }

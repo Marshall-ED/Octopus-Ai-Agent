@@ -26,9 +26,9 @@ public class PgVectorVectorStoreConfigTest {
     @Test
     void test() {
         List<Document> documents = List.of(
-                new Document("鱼皮的编程导航有什么用？学编程啊，做项目啊", Map.of("meta1", "meta1")),
-                new Document("程序员鱼皮的原创项目教程 codefather.cn"),
-                new Document("鱼皮是坤坤", Map.of("meta2", "meta2")));
+                new Document("菜鸟教程有什么用？学编程啊，做项目啊", Map.of("meta1", "meta1")),
+                new Document("菜鸟教程的原创网站https://www.runoob.com/"),
+                new Document("章鱼智能体赛高！！！", Map.of("meta2", "meta2")));
         // 添加文档
         pgVectorVectorStore.add(documents);
         // 相似度查询
