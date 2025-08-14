@@ -4,13 +4,22 @@ import com.hezhu.octopusaiagent.advisior.MyLoggerAdvisor;
 
 import com.hezhu.octopusaiagent.chatMemory.FileBasedChatMemory;
 import com.hezhu.octopusaiagent.chatMemory.RedisBasedChatMemory;
+import com.hezhu.octopusaiagent.rag.LoveAppRagCloudAdvisorConfig;
+import com.hezhu.octopusaiagent.rag.LoveAppRagCustomAdvisorFactory;
+import com.hezhu.octopusaiagent.rag.QueryRewriter;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.client.advisor.QuestionAnswerAdvisor;
+import org.springframework.ai.chat.client.advisor.api.Advisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.InMemoryChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.tool.ToolCallback;
+import org.springframework.ai.tool.ToolCallbackProvider;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -38,13 +47,13 @@ public class LoveApp {
      *
      * @param dashscopeChatModel
      */
-    //初始化基于redis的对话记忆
-    public LoveApp(ChatModel dashscopeChatModel,RedisBasedChatMemory chatMemory) {
+    //3、初始化基于redis的对话记忆   参数加上RedisBasedChatMemory chatMemory
+    public LoveApp(ChatModel dashscopeChatModel) {
 
-        //初始化基于文件的对话记忆
-//        String fileDir = System.getProperty("user.dir")+"/tmp/chat-memory";
-//        ChatMemory chatMemory = new FileBasedChatMemory(fileDir);
-        //初始化基于内存的对话记忆
+        //1、初始化基于文件的对话记忆
+        String fileDir = System.getProperty("user.dir") + "/tmp/chat-memory";
+        ChatMemory chatMemory = new FileBasedChatMemory(fileDir);
+        //2、初始化基于内存的对话记忆
 //        ChatMemory chatMemory = new InMemoryChatMemory();
         chatClient = ChatClient.builder(dashscopeChatModel)
                 .defaultSystem(SYSTEM_PROMPT)
@@ -80,12 +89,15 @@ public class LoveApp {
         String content = chatResponse.getResult().getOutput().getText();
         log.info("content:{}", content);
         return content;
-    };
+    }
+
+    ;
 
 
-    record LoveReport(String title, List<String> suggestions){
+    record LoveReport(String title, List<String> suggestions) {
 
     }
+
     /**
      * AI恋爱报告功能，结构化输出
      *
@@ -96,7 +108,7 @@ public class LoveApp {
     public LoveReport doChatWithReport(String message, String chatId) {
         LoveReport loveReport = chatClient
                 .prompt()
-                .system(SYSTEM_PROMPT + "每次对话后都要生成恋爱结果，标题为{用户名}的恋爱报告，内容为建议列表" )
+                .system(SYSTEM_PROMPT + "每次对话后都要生成恋爱结果，标题为{用户名}的恋爱报告，内容为建议列表")
                 .user(message)
                 .advisors(spec -> spec.param(CHAT_MEMORY_CONVERSATION_ID_KEY, chatId)
                         .param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 10)
@@ -108,5 +120,103 @@ public class LoveApp {
         return loveReport;
     }
 
+    @Resource
+    private VectorStore loveAppVectorStore;
+
+    @Resource
+    private Advisor loveAppRagCloudAdvisor;
+
+    @Resource
+    private VectorStore pgVectorVectorStore;
+
+    @Resource
+    private QueryRewriter queryRewriter;
+
+    public String doChatWithRag(String message, String chatId) {
+        String rewrittenMessage = queryRewriter.doQueryRewriter(message);
+
+        ChatResponse chatResponse = chatClient
+                .prompt()
+                //使用改写后的查询
+                .user(rewrittenMessage)
+                .advisors(spec -> spec.param(CHAT_MEMORY_CONVERSATION_ID_KEY, chatId)
+                        .param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 10))
+                // 开启日志，便于观察效果
+                .advisors(new MyLoggerAdvisor())
+                // 应用 RAG 知识库问答
+                .advisors(new QuestionAnswerAdvisor(loveAppVectorStore))
+                //应用 RAG 检索增强服务（基于云知识库服务）
+//                .advisors(loveAppRagCloudAdvisor)
+                //应用 RAG 检索增强服务（基于PgVector向量存储）
+//                .advisors(new QuestionAnswerAdvisor(pgVectorVectorStore))
+                //应用自定义 RAG 检索增强服务（文档查询器 + 上下文增强器）
+//                .advisors(
+//                        LoveAppRagCustomAdvisorFactory.createLoveAppRagCustomAdvisor(
+//                                loveAppVectorStore, "单身"
+//                        )
+//                )
+                .call()
+                .chatResponse();
+        String content = chatResponse.getResult().getOutput().getText();
+        log.info("content: {}", content);
+        return content;
+    }
+
+
+    //AI 调用工具能力
+    @Resource
+    private ToolCallback[] allTools;
+
+    /**
+     * AI恋爱报告功能，支持调用工具
+     *
+     * @param message
+     * @param chatId
+     * @return
+     */
+    public String doChatWithTools(String message, String chatId) {
+        ChatResponse chatResponse = chatClient
+                .prompt()
+                .user(message)
+                .advisors(spec -> spec.param(CHAT_MEMORY_CONVERSATION_ID_KEY, chatId)
+                        .param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 10)
+                )
+                //开启日志，便于观察效果
+                .advisors(new MyLoggerAdvisor())
+                .tools(allTools)
+                .call()
+                .chatResponse();
+        String content = chatResponse.getResult().getOutput().getText();
+        log.info("content:{}", content);
+        return content;
+    }
+
+    @Resource
+    private ToolCallbackProvider toolCallbackProvider;
+
+    /**
+     * AI恋爱报告功能，支持调用MCP
+     *
+     * @param message
+     * @param chatId
+     * @return
+     */
+    public String doChatWithMCP(String message, String chatId) {
+        ChatResponse chatResponse = chatClient
+                .prompt()
+                .user(message)
+                .advisors(spec -> spec.param(CHAT_MEMORY_CONVERSATION_ID_KEY, chatId)
+                        .param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 10)
+                )
+                //开启日志，便于观察效果
+                .advisors(new MyLoggerAdvisor())
+                .tools(toolCallbackProvider)
+                .call()
+                .chatResponse();
+        String content = chatResponse.getResult().getOutput().getText();
+        log.info("content:{}", content);
+        return content;
+    }
 }
+
 

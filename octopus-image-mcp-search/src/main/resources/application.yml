@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: octopus-image-mcp-search
+  profiles:
+    active: stdio
+
+server:
+  port: 8127
