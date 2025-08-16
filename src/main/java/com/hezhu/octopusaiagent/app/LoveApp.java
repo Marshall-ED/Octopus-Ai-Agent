@@ -2,10 +2,7 @@ package com.hezhu.octopusaiagent.app;
 
 import com.hezhu.octopusaiagent.advisior.MyLoggerAdvisor;
 
-import com.hezhu.octopusaiagent.chatMemory.FileBasedChatMemory;
-import com.hezhu.octopusaiagent.chatMemory.RedisBasedChatMemory;
-import com.hezhu.octopusaiagent.rag.LoveAppRagCloudAdvisorConfig;
-import com.hezhu.octopusaiagent.rag.LoveAppRagCustomAdvisorFactory;
+import com.hezhu.octopusaiagent.chatmemory.FileBasedChatMemory;
 import com.hezhu.octopusaiagent.rag.QueryRewriter;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +11,6 @@ import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.client.advisor.api.Advisor;
 import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.memory.InMemoryChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.tool.ToolCallback;
@@ -47,14 +43,14 @@ public class LoveApp {
      *
      * @param dashscopeChatModel
      */
-    //3、初始化基于redis的对话记忆   参数加上RedisBasedChatMemory chatMemory
+    //3、初始化基于redis的对话记忆   参数加上RedisBasedChatMemory chatmemory
     public LoveApp(ChatModel dashscopeChatModel) {
 
         //1、初始化基于文件的对话记忆
         String fileDir = System.getProperty("user.dir") + "/tmp/chat-memory";
         ChatMemory chatMemory = new FileBasedChatMemory(fileDir);
         //2、初始化基于内存的对话记忆
-//        ChatMemory chatMemory = new InMemoryChatMemory();
+//        ChatMemory chatmemory = new InMemoryChatMemory();
         chatClient = ChatClient.builder(dashscopeChatModel)
                 .defaultSystem(SYSTEM_PROMPT)
                 .defaultAdvisors(

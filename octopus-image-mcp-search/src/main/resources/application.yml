@@ -2,7 +2,7 @@ spring:
   application:
     name: octopus-image-mcp-search
   profiles:
-    active: stdio
+    active: sse
 
 server:
   port: 8127

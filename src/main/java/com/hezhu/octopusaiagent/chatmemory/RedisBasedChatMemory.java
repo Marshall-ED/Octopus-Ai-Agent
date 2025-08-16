@@ -1,4 +1,4 @@
-package com.hezhu.octopusaiagent.chatMemory;
+package com.hezhu.octopusaiagent.chatmemory;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;

@@ -35,11 +35,11 @@ spring:
         model: gemma3:1b
     mcp:
       client:
-#        sse:
-#          connections:
-#            server1: http://localhost:8127
-        stdio:
-          servers-configuration: classpath:mcp-servers.json
+        sse:
+          connections:
+            server1: http://localhost:8127
+#        stdio:
+#          servers-configuration: classpath:mcp-servers.json
 
 logging:
   level:

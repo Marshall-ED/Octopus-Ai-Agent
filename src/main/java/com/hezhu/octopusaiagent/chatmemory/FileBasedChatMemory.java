@@ -1,4 +1,4 @@
-package com.hezhu.octopusaiagent.chatMemory;
+package com.hezhu.octopusaiagent.chatmemory;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
