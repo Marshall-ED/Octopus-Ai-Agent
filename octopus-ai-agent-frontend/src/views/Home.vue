@@ -83,8 +83,8 @@ const navigateTo = (path) => {
   --neon-purple: #9000ff;
   --neon-pink: #ff00d4;
   --cyber-black: #0a0a12;
-  --cyber-dark: #111122;
-  --cyber-light: #edf7ff;
+  --cyber-dark: #2a2a3a;
+  --cyber-light: #ffffff;
 }
 
 .home-container {
@@ -94,10 +94,10 @@ const navigateTo = (path) => {
   background-color: var(--cyber-dark);
   background-image: linear-gradient(
       0deg,
-      rgba(8, 17, 34, 0.9),
-      rgba(5, 8, 20, 0.9)
+      rgba(42, 42, 58, 0.9),
+      rgba(30, 30, 45, 0.9)
     ),
-    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect x="0" y="0" width="100" height="1" fill="%23111133" opacity="0.3"/><rect x="0" y="0" width="1" height="100" fill="%23111133" opacity="0.3"/></svg>');
+    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect x="0" y="0" width="100" height="1" fill="%23404050" opacity="0.3"/><rect x="0" y="0" width="1" height="100" fill="%23404050" opacity="0.3"/></svg>');
   background-size: auto, 40px 40px;
   position: relative;
   overflow: hidden;
@@ -156,7 +156,7 @@ const navigateTo = (path) => {
 .subtitle {
   font-family: "Orbitron", sans-serif;
   font-size: 1.2rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.8);
   max-width: 600px;
   margin: 0 auto 20px;
   letter-spacing: 3px;
@@ -213,11 +213,11 @@ const navigateTo = (path) => {
 
 .app-card {
   width: 340px;
-  background-color: rgba(17, 23, 41, 0.7);
+  background-color: rgba(60, 60, 80, 0.8);
   backdrop-filter: blur(10px);
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 240, 255, 0.2),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    inset 0 0 0 1px rgba(0, 240, 255, 0.3);
   padding: 30px;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -287,14 +287,14 @@ const navigateTo = (path) => {
   font-family: "Orbitron", sans-serif;
   font-size: 1.6rem;
   font-weight: bold;
-  color: white;
+  color: #ffffff;
   margin-bottom: 12px;
   text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
 }
 
 .app-desc {
   font-size: 1rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.8);
   line-height: 1.6;
 }
 
@@ -366,7 +366,7 @@ const navigateTo = (path) => {
 .circle {
   position: absolute;
   border-radius: 50%;
-  opacity: 0.15;
+  opacity: 0.12;
 }
 
 .circle-1 {
